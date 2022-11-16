@@ -6,14 +6,16 @@ import rospy
 
 class Agent:
     def __init__(self, delta):
+        self.delta = delta
         self.s = (0, 0, 0, 0, 0, 0)
-        self.a = set_discrete_action_set(delta)
+        self.a = set_discrete_action_space(self.delta)
         self.joint_ranges = {1 : (-2.967, 2.967),
                              2 : (-1.91, 0.61),
                              3 : (-1.34, 1.57),
                              4 : (-2.09, 2.09),
                              5 : (-1.92, 1.05),
                              6 : (-2.53, 2.53)}
+        self.n_joints = len(self.joint_ranges)
 
     def reset_agent(self):
         self.s = (0, 0, 0, 0, 0, 0)
@@ -24,7 +26,7 @@ class Agent:
         return self.s
         
 
-    def set_discrete_action_set(delta):
+    def set_discrete_action_space(self, delta):
         # 12 actions
         #   +/- delta to each of 6 joint values
         actions = []
