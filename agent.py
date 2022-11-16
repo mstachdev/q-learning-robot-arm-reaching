@@ -8,7 +8,7 @@ class Agent:
     def __init__(self, delta):
         self.delta = delta
         self.s = (0, 0, 0, 0, 0, 0)
-        self.a = set_discrete_action_space(self.delta)
+        self.a = self.set_discrete_action_space(self.delta)
         self.joint_ranges = {1 : (-2.967, 2.967),
                              2 : (-1.91, 0.61),
                              3 : (-1.34, 1.57),
@@ -32,7 +32,7 @@ class Agent:
         actions = []
         for i in range(6):
             a = [0]*6
-            a2 = a.copy()
+            a2 = list(a) # create a local copy
             a[i] = delta
             a2[i] = -delta
             actions.append(tuple(a))
