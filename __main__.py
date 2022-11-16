@@ -1,3 +1,8 @@
+'''
+Phase 1
+Testing discrete state and action set with q-learning
+Author: Matthew Stachyra
+'''
 from agent import Agent
 from environment import Environment
 from qlearn import QLearning
