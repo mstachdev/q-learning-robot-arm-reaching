@@ -37,7 +37,7 @@ class Environment:
         for i in range(6):
             values = []
             joint_range = self.agent.joint_ranges[i+1] # get valid range of joint values
-            left_ptr = self.start[i+1] # get corresponding joint value from start
+            left_ptr = self.start[i] # get corresponding joint value from start
             right_ptr = left_ptr
             while(left_ptr >= joint_range[0] or right_ptr <= joint_range[1]):
                 if left_ptr >= joint_range[0]:
