@@ -16,8 +16,18 @@ class Agent:
                              5 : (-1.92, 1.05),
                              6 : (-2.53, 2.53)}
 
+    def reset_agent(self):
+        self.s = (0, 0, 0, 0, 0, 0)
+
+
+    def get_start(self):
+        self.reset_agent()
+        return self.s
+        
 
     def set_discrete_action_set(delta):
+        # 12 actions
+        #   +/- delta to each of 6 joint values
         actions = []
         for i in range(6):
             a = [0]*6
@@ -31,15 +41,6 @@ class Agent:
     
     def get_actions(self):
         return self.a
-
-    
-    def reset_agent(self):
-        self.s = (0, 0, 0, 0, 0, 0)
-
-    
-    def get_start(self):
-        self.reset_agent()
-        return self.s
 
     
     def get_valid_actions(self, joint_values):
