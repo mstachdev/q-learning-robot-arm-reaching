@@ -5,8 +5,7 @@ from niryo_robot_python_ros_wrapper import *
 import rospy
 
 class Agent:
-    def __init__(self, env, delta):
-        self.env = env
+    def __init__(self, delta):
         self.s = (0, 0, 0, 0, 0, 0)
         self.a = set_discrete_action_set(delta)
         self.joint_ranges = {1 : (-2.967, 2.967),
