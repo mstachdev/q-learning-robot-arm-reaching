@@ -101,7 +101,4 @@ class Agent:
         # execute tracjectory using niryo's provided wrapper
         self.ned.execute_trajectory_from_poses_and_joints(trajectory, list_type=['joint'])
 
-        # save trajectory
-        self.ned.save_trajectory("ned_discrete_reaching_trajectory", trajectory)
-
 

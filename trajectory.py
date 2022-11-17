@@ -37,6 +37,10 @@ q = QLearning(epsilon=EPSILON,
 # run optimal episode with saved q table
 optimal_episode = q.run(saved_q)
 
+# save episode
+with open('optimal_episode.pickle', 'wb') as handle:
+    pickle.dump(optimal_episode, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
 # execute optimal episode as trajectory on Niryo Ned2
 a.execute_trajectory(optimal_episode)
 
