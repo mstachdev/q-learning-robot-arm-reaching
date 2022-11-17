@@ -30,4 +30,6 @@ if __name__ == "__main__":
                   environment=e,
                   episodes=EPISODES_N,
                   runs=RUNS_N)
+    
+    run = q()
 

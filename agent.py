@@ -23,6 +23,7 @@ class Agent:
         # store wrapper
         self.ned = NiryoRosWrapper()
 
+
     def reset_agent(self):
         self.s = (0, 0, 0, 0, 0, 0)
 
@@ -32,7 +33,7 @@ class Agent:
         self.reset_agent()
 
         # move ned to starting position
-        self.ned.move_joints(self.s)
+        self.ned.move_joints(*self.s)
 
         return self.s
         
@@ -64,7 +65,7 @@ class Agent:
             new_state = joint_values + joint_adjustment
             # check each component of new state (i.e., each joint value)
             #   is within its perscribed range
-            for i in len(range(new_state)):
+            for i in range(self.n_joints):
                 valid_range = self.joint_ranges[i+1]
                 joint_value = new_state[i]
                 # append the joint adjustment (i.e., action) if within both - and + ranges
