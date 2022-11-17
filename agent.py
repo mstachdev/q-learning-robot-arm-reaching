@@ -79,14 +79,27 @@ class Agent:
         return valid_actions
     
 
-    def execute_trajectory(self, episode):
+    def execute_trajectory(self, episode, load=False, trajectory=None):
         # episode has form episode[t] = ((s, a), r)
+        #   train using qlearn()
+        #   then run an episode with qlearn.run()
+        #   then transform that to extract the states (to get the trajectory)
+
+        # load (and do not regenerate trajectory) if 'load' is set to True with
+        #   a provided trajectory name to load
+        if load:
+            trajectory = self.get_saved_trajectory(trajectory)
+            self.ned.execute_trajectory_from_poses_and_joints(trajectory)
+            return 
         
         # a trajectory will contain the sequence of states (i.e., joint values) that
         #   we progressively move through
-        joint_value_lists = [s[0][0] for tup in episode]
+        trajectory = [s[0][0] for tup in episode]
         
         # execute tracjectory using niryo's provided wrapper
-        self.ned.execute_trajectory_from_poses_and_joints(joint_value_lists)
+        self.ned.execute_trajectory_from_poses_and_joints(trajectory)
+
+        # save trajectory
+        self.ned.save_trajectory("ned_discrete_reaching_trajectory", trajectory)
 
 

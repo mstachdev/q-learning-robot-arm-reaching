@@ -19,15 +19,16 @@ if __name__ == "__main__":
               0)
     EPSILON = 0.1
     DISCOUNT_R = 0.9
-    LEARNING_R = 0.9
-    EPISODES_N = 1000
+    LEARNING_R = 0.925
+    EPISODES_N = 5000
     RUNS_N = 1
-    try:
-        with open('saved_q_table.pickle', 'rb') as handle:
-            saved_q = pickle.load(handle)
-    except:
-        print("No pickle file available to load.")
-        pass
+
+    # try:
+    #     with open('saved_q_table.pickle', 'rb') as handle:
+    #         saved_q = pickle.load(handle)
+    # except:
+    #     print("No pickle file available to load.")
+    #     pass
 
     a = Agent(DELTA)
     e = Environment(a, TARGET)
@@ -41,7 +42,10 @@ if __name__ == "__main__":
     
     run_data = q()
 
-    with open('saved_q_table_lr0_9.pickle', 'wb') as handle:
+    with open('saved_q_table_lr0_925.pickle', 'wb') as handle:
         pickle.dump(q.Q, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        
+    with open('run_data_lr0_925.pickle', 'wb') as handle:
+        pickle.dump(run_data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
