@@ -17,12 +17,23 @@ class Agent:
                              6 : (-0.25, 0.25)}
         self.n_joints = len(self.joint_ranges)
 
+        # initialize node
+        rospy.init_node('ned2_discrete_reaching')
+
+        # store wrapper
+        self.ned = NiryoRosWrapper()
+
     def reset_agent(self):
         self.s = (0, 0, 0, 0, 0, 0)
 
 
     def get_start(self):
+        # reset ned to starting position 
         self.reset_agent()
+
+        # move ned to starting position
+        self.ned.move_joints(self.s)
+
         return self.s
         
 
@@ -60,8 +71,16 @@ class Agent:
                 if joint_value >= valid_range[0] and joint_value <= valid_range[1]:
                     valid_actions.append(joint_adjustment)
         return valid_actions
+    
 
-
-            
-
+    def execute_trajectory(self, episode):
+        # episode has form episode[t] = ((s, a), r)
         
+        # a trajectory will contain the sequence of states (i.e., joint values) that
+        #   we progressively move through
+        joint_value_lists = [s[0][0] for tup in episode]
+        
+        # execute tracjectory using niryo's provided wrapper
+        self.ned.execute_trajectory_from_poses_and_joints(joint_value_lists)
+
+

@@ -9,12 +9,12 @@ from qlearn import QLearning
 
 if __name__ == "__main__":
     DELTA = 0.25
-    TARGET = (0.4,
-              0.4,
-              -1.2,
-              2,
+    TARGET = (0.5,
+              -0.5,
+              -0.5,
               1,
-              -1)
+              0,
+              0)
     EPSILON = 0.1
     DISCOUNT_R = 0.9
     LEARNING_R = 0.5
