@@ -19,7 +19,7 @@ if __name__ == "__main__":
               0)
     EPSILON = 0.1
     DISCOUNT_R = 0.9
-    LEARNING_R = 0.7
+    LEARNING_R = 0.9
     EPISODES_N = 1000
     RUNS_N = 1
     try:
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     
     run_data = q()
 
-    with open('saved_q_table.pickle', 'wb') as handle:
+    with open('saved_q_table_lr0_9.pickle', 'wb') as handle:
         pickle.dump(q.Q, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
