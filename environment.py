@@ -99,12 +99,8 @@ class Environment:
         return -self.euclidean_distance(robot_pos)
 
     
-    def reached_target(self, robot_pos, threshold=0.5):
-        # default threshold value of 0.4 means about 0.2-0.3 deviation
-        #   is permitted for each of x, y, z
-        if self.euclidean_distance(robot_pos) < threshold:
-            return True
-        return False
+    def reached_target(self, robot_pos):
+        return robot_pos == self.target_pos
 
 
     # TODO

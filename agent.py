@@ -56,21 +56,26 @@ class Agent:
         return self.a
 
     
-    def get_valid_actions(self, joint_values):
+    def get_valid_actions(self, state):
         # valid is defined as not exceeding
         #   the possible range of values for
         #   any of the 6 joints in Niryo Ned2.
         valid_actions = []
-        for joint_adjustment in self.a:
-            new_state = joint_values + joint_adjustment
+        # 12 actions
+        for action in self.a:
+            new_state = tuple(np.asarray(state) + np.asarray(action))
             # check each component of new state (i.e., each joint value)
             #   is within its perscribed range
-            for i in range(self.n_joints):
+            update = True
+            for i in range(len(new_state)):
                 valid_range = self.joint_ranges[i+1]
                 joint_value = new_state[i]
                 # append the joint adjustment (i.e., action) if within both - and + ranges
-                if joint_value >= valid_range[0] and joint_value <= valid_range[1]:
-                    valid_actions.append(joint_adjustment)
+                if (joint_value < valid_range[0]) or (joint_value > valid_range[1]):
+                   update = False 
+            # only update if new state is o.k. for every joint in 6-tuple
+            if update:
+                valid_actions.append(action)
         return valid_actions
     
 

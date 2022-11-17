@@ -47,8 +47,16 @@ class QLearning:
         # state, action as 1 tuple of 12 values - a 12-tuple
 
         valid_actions = self.agent.get_valid_actions(state)
+        if len(valid_actions)==0:
+            print("No valid actions")
         sas = [state + a for a in valid_actions] 
-        subset_dict = {k:v for k, v in self.Q.items() if k in sas} # subset dict to keys
+        subset_dict = {sa:self.Q[sa] for sa in sas} # subset dict to keys
+
+        # random, because subset_dict is empty
+        if len(subset_dict)==0:
+            print("empty dict")
+            return valid_actions[random.randint(0, len(valid_actions))-1]
+        # greedy
         idxs = max(subset_dict, key=subset_dict.get) # return key for max value
         return idxs[-6:] # return (dx_j1, dx_j2, dx_j3, dx_j4, dx_j5, dx_j6) 
      
@@ -79,24 +87,22 @@ class QLearning:
         self.Q[old_sa] = oldq + self.l*(target - oldq)
      
 
-#     def DEBUG_PRINT(self, timestep, old_x, old_y, old_dx, old_dy, x, y, dx, dy, atype):
-#         # [0] print time step
-#         print(timestep)
-# 
-#         # [1] details about state-action update
-#         print(f"{old_x, old_y} and {old_dx, old_dy} -> {x, y} and {dx, dy}")
-# 
-#         # [2] details about action
-#         #   whether greedy or exploratory
-#         #   what q key-value pairs it was selected from
-#         sa_pairs = [(old_x, old_y, _dx, _dy) 
-#                     for _dx, _dy 
-#                     in self.agent.get_valid_actions(old_x, old_y)]
-#         qvalues = [(sa, self.Q[sa]) for sa in sa_pairs]
-#         print(f"{dx, dy} action selected was {atype} from {qvalues}")
-# 
-#         # new line to indicate new episode
-#         print()
+    def DEBUG_PRINT(self, timestep, old_s, old_a, s, a):
+        # [0] print time step
+        print(timestep)
+
+        # [1] details about state-action update
+        print("{0} and {1} -> {2} and {3}".format(old_s, old_a, s, a))
+
+        # [2] details about action
+        #   whether greedy or exploratory
+        #   what q key-value pairs it was selected from
+        sa_pairs = [tuple(old_s + a) for a in self.agent.get_valid_actions(old_s)]
+        qvalues = [(sa, self.Q[sa]) for sa in sa_pairs]
+        print("{0} action selected was from {1}".format(a, qvalues))
+
+        # new line to indicate new episode
+        print()
      
  
     def __call__(self):
@@ -112,6 +118,7 @@ class QLearning:
             #   has the highest q value so far - i.e., we follow a different 
             #   policy where we are greedy.
             for e in range(self.episodes): # 500
+                print(e)
                 self.episode = {}
                 t = 0
                 r = 0
@@ -119,30 +126,27 @@ class QLearning:
                 s = self.agent.get_start() 
                 a = self.get_next_action(s)
                 while(not self.env.reached_target(s)):
-                    print(t)
                     old_s, old_a = s, a
                     s = self.update_state(old_s, old_a)
+                    r = self.env.get_reward(s)
 
-                    print("before next action")
-                    a = self.get_next_action(s) # THIS IS SLOW
-                    print("after next action")
+                    a = self.get_next_action(s)
 
                     # we pass the greedy action (greedy_dx, greedy_dy) to update_q() rather than
                     # the policy's dx, dy we get above
 
-                    print("before next greedy action")
-                    greedy_a = self.get_greedy_action(s) # THIS IS SLOW TOO
-                    print("after next greedy action")
+                    greedy_a = self.get_greedy_action(s)
                     
-                    r = self.env.get_reward(s)
                     self.update_q(old_s, old_a, s, greedy_a, r) 
 
                     # store episode
                     #  the last episode will be used for the trajectory to move the robot
                     self.episode[t] = ((s, a), r)
-                    # self.DEBUG_PRINT(t, old_x, old_y, old_dx, old_dy, x, y, dx, dy, atype)
+                    # self.DEBUG_PRINT(t, old_s, old_a, s, a)
                     t += 1
                     tr += r
+
+                print("Reached target in {0} time steps with {1} total reward, ending at state {2}.".format(t, tr, s))
                 cr_by_episode.append([tr])
                 self.episode[t] = ((s, a), r)
             episodes_in_run.append(cr_by_episode) 

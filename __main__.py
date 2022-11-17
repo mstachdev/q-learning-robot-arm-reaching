@@ -17,8 +17,8 @@ if __name__ == "__main__":
               0)
     EPSILON = 0.1
     DISCOUNT_R = 0.9
-    LEARNING_R = 0.5
-    EPISODES_N = 500
+    LEARNING_R = 0.9
+    EPISODES_N = 250
     RUNS_N = 1
 
     a = Agent(DELTA)
@@ -31,5 +31,7 @@ if __name__ == "__main__":
                   episodes=EPISODES_N,
                   runs=RUNS_N)
     
-    run = q()
+    run_data = q()
+    last_episode = q.episode
+    print(last_episode)
 
