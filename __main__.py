@@ -3,6 +3,8 @@ Phase 1
 Testing discrete state and action set with q-learning
 Author: Matthew Stachyra
 '''
+import pickle
+
 from agent import Agent
 from environment import Environment
 from qlearn import QLearning
@@ -17,9 +19,15 @@ if __name__ == "__main__":
               0)
     EPSILON = 0.1
     DISCOUNT_R = 0.9
-    LEARNING_R = 0.9
-    EPISODES_N = 250
+    LEARNING_R = 0.7
+    EPISODES_N = 1000
     RUNS_N = 1
+    try:
+        with open('saved_q_table.pickle', 'rb') as handle:
+            saved_q = pickle.load(handle)
+    except:
+        print("No pickle file available to load.")
+        pass
 
     a = Agent(DELTA)
     e = Environment(a, TARGET)
@@ -32,6 +40,8 @@ if __name__ == "__main__":
                   runs=RUNS_N)
     
     run_data = q()
-    last_episode = q.episode
-    print(last_episode)
+
+    with open('saved_q_table.pickle', 'wb') as handle:
+        pickle.dump(q.Q, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
 

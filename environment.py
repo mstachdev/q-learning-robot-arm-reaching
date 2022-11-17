@@ -96,7 +96,8 @@ class Environment:
 
 
     def get_reward(self, robot_pos):
-        return -self.euclidean_distance(robot_pos)
+        # return -self.euclidean_distance(robot_pos)
+        return -1
 
     
     def reached_target(self, robot_pos):
