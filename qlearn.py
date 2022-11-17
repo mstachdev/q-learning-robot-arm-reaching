@@ -103,6 +103,31 @@ class QLearning:
 
         # new line to indicate new episode
         print()
+
+
+    def run(self, q=None):
+        # use any provided q table
+        if q:
+            self.Q = q
+        self.episode = {}
+        t = 0
+        r = 0
+        tr = r
+        s = self.agent.get_start() 
+        a = self.get_next_action(s)
+        while(not self.env.reached_target(s)):
+            old_s, old_a = s, a
+            s = self.update_state(old_s, old_a)
+            r = self.env.get_reward(s)
+            a = self.get_next_action(s)
+            greedy_a = self.get_greedy_action(s)
+            self.update_q(old_s, old_a, s, greedy_a, r) 
+            self.episode[t] = ((s, a), r)
+            t += 1
+            tr += r
+        print("Reached target in {0} time steps with {1} total reward, ending at state {2}.".format(t, tr, s))
+        self.episode[t] = ((s, a), r)
+        return self.episode
      
  
     def __call__(self):

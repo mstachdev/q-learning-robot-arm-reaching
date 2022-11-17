@@ -94,10 +94,12 @@ class Agent:
         
         # a trajectory will contain the sequence of states (i.e., joint values) that
         #   we progressively move through
-        trajectory = [s[0][0] for tup in episode]
+        trajectory = [tup[0][0] for tup in episode.values()]
+        
+        print("Running optimal episode with trajectory that has {0} steps; \n trajectory: {1}".format(len(trajectory), trajectory))
         
         # execute tracjectory using niryo's provided wrapper
-        self.ned.execute_trajectory_from_poses_and_joints(trajectory)
+        self.ned.execute_trajectory_from_poses_and_joints(trajectory, list_type=['joint'])
 
         # save trajectory
         self.ned.save_trajectory("ned_discrete_reaching_trajectory", trajectory)
