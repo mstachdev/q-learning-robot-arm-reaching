@@ -24,32 +24,33 @@ class QLearning:
         # by default this takes each state and creates 12 versions of it, each with a
         #   possible action value
         q = {}
-        for state in self.env.state_space: # each state is a tuple
+        for state in self.env.state_space: # each state is a numpy array
             for action in self.agent.a: # each action is a tuple
-                sa = state + action
+                s = tuple(state.tolist())
+                sa = s + action # tuple state-action pair
                 q[sa] = 0
         return q
 
 
-#     def get_next_action(self, x, y):
-#         if(np.random.binomial(1, self.e)): # 1 if exploring, 0 if exploiting
-#             # valid here means not out of the bounds of the array
-#             #   but we still need to check whether it is "off the cliff"Agent
-#             #   incurring the -100 reward/penalty
-#             valid_actions = self.agent.get_valid_actions(x, y)
-#             exploring =  valid_actions[random.randint(0, len(valid_actions))-1]
-#             return exploring[0], exploring[1], "exploring"
-#         a = self.get_greedy_action(x, y) # state returned has form (x, y)
-#         return a[0], a[1], "greedy" # dx, dy
-#     
-# 
-#     def get_greedy_action(self, x, y):
-#         sas = [tuple([x, y, a[0], a[1]]) for a in self.agent.get_valid_actions(x, y)] 
-#         subset_dict = {k:v for k, v in self.Q.items() if k in sas} # subset dict to keys
-#         idxs = max(subset_dict, key=subset_dict.get) # return key for max value
-#         return idxs[-2:] # return (dx, dy) from (x, y, dx, dy)
-#     
-#     
+     def get_next_action(self, state):
+         # state has form 6-tuple with joint values
+         if(np.random.binomial(1, self.e)): # 1 if exploring, 0 if exploiting
+             valid_actions = self.agent.get_valid_actions(state) # pass the joint values 
+             exploring = valid_actions[random.randint(0, len(valid_actions))-1]
+             return exploring # e.g., (0,0,0,-0.25,0,0) or an adjustment to a single joint
+         a = self.get_greedy_action(state)
+         return a
+     
+ 
+     def get_greedy_action(self, state):
+         # state has form 6-tuple with joint values
+         # state, action as 1 tuple of 12 values - a 12-tuple
+         sas = [state + a for a in self.agent.get_valid_actions(state)] 
+         subset_dict = {k:v for k, v in self.Q.items() if k in sas} # subset dict to keys
+         idxs = max(subset_dict, key=subset_dict.get) # return key for max value
+         return idxs[-2:] # return (dx, dy) from (x, y, dx, dy)
+     
+     
 #     def update_state(self, old_x, old_y, old_dx, old_dy):
 #         r = -1 # set default reward
 #         # update state

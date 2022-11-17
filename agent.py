@@ -9,12 +9,12 @@ class Agent:
         self.delta = delta
         self.s = (0, 0, 0, 0, 0, 0)
         self.a = self.set_discrete_action_space(self.delta)
-        self.joint_ranges = {1 : (-2.967, 2.967),
-                             2 : (-1.91, 0.61),
-                             3 : (-1.34, 1.57),
-                             4 : (-2.09, 2.09),
-                             5 : (-1.92, 1.05),
-                             6 : (-2.53, 2.53)}
+        self.joint_ranges = {1 : (-1.25, 1.25),
+                             2 : (-1.25, 0.25),
+                             3 : (-1, 1),
+                             4 : (-1.75, 1.75),
+                             5 : (-0.25, .25),
+                             6 : (-0.25, 0.25)}
         self.n_joints = len(self.joint_ranges)
 
     def reset_agent(self):
@@ -51,9 +51,12 @@ class Agent:
         valid_actions = []
         for joint_adjustment in self.a:
             new_state = joint_values + joint_adjustment
+            # check each component of new state (i.e., each joint value)
+            #   is within its perscribed range
             for i in len(range(new_state)):
                 valid_range = self.joint_ranges[i+1]
                 joint_value = new_state[i]
+                # append the joint adjustment (i.e., action) if within both - and + ranges
                 if joint_value >= valid_range[0] and joint_value <= valid_range[1]:
                     valid_actions.append(joint_adjustment)
         return valid_actions

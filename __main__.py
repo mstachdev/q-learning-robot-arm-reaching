@@ -8,7 +8,7 @@ from environment import Environment
 from qlearn import QLearning
 
 if __name__ == "__main__":
-    DELTA = 0.2
+    DELTA = 0.25
     TARGET = (0.4,
               0.4,
               -1.2,

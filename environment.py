@@ -1,6 +1,6 @@
 import random
 import math
-from itertools import product
+from os.path import exists
 
 import numpy as np
 from niryo_robot_python_ros_wrapper import *
@@ -29,9 +29,17 @@ class Environment:
         #   combinations of valid (in terms of ranges of joint values) 
         #   joint values that are our states in the discrete case.
 
+        # load if it exists
+        f = "discrete_data.npy"
+        if exists(f):
+            states_as_arrays = np.load(f) 
+            print("Loaded file {0} with shape {1}.".format(f, states_as_arrays.shape))
+            return states_as_arrays
+
+        # else, build the states from scratch
         start = self.agent.s # need to create states, incrementing/decrementing
                              # from the start to ensure these states are reachable
-
+        
         # get all possible joint values by joint
         joint_values = { i+1 : [] for i in range(self.agent.n_joints) } 
         for i in range(6):
@@ -49,10 +57,35 @@ class Environment:
             joint_values[i+1].extend(values)
 
         # cross product these lists of joint values to get all possible states
-        joint_lists = [v for k, v in joint_values.items()]
-        states = set(product(*joint_lists))
+        joint_lists = [np.asarray(v) for k, v in joint_values.items()]
+        states_as_arrays = self.cartesian(joint_lists)
 
-        return states
+        # return unique subset of arrays
+        # 41m in discrete case with 0.2 step
+        states_as_arrays = np.unique(states_as_arrays, axis=0)
+        np.save(f, states_as_arrays)
+        print("Saved file {0} with shape {1}.".format(f, states_as_arrays.shape))
+        return states_as_arrays
+
+
+    def cartesian(self, arrays, out=None):
+        # itertools.product() took too long and would freeze
+        # source: https://stackoverflow.com/questions/11144513/cartesian-product-of-x-and-y-array-points-into-single-array-of-2d-points/11146645#11146645
+
+        arrays = [np.asarray(x) for x in arrays]
+        dtype = arrays[0].dtype
+
+        n = np.prod([x.size for x in arrays])
+        if out is None:
+            out = np.zeros([n, len(arrays)], dtype=dtype)
+
+        m = n / arrays[0].size
+        out[:,0] = np.repeat(arrays[0], m)
+        if arrays[1:]:
+            self.cartesian(arrays[1:], out=out[0:m,1:])
+            for j in xrange(1, arrays[0].size):
+                out[j*m:(j+1)*m,1:] = out[0:m,1:]
+        return out
 
 
     def euclidean_distance(self, robot_pos):
